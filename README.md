@@ -8,7 +8,7 @@ Changes:
 - Increased minimum Laravel and PHP requirements
 - Adjusted validation requirements in the `Receiver` model
 - Renamed config file from `inPost.php` to `inpost.php`
-- Changed Laravel cache prefixes from `inPost` to `inpost_`
+- Changed Laravel cache prefixes from `inPost_` to `inpost_`
 - More changes may come soon (if I find something that requires it :P)
 
 # InPost ShipX API Client
@@ -25,7 +25,7 @@ InPost ShipX API client for laravel.
 The recommended way to install is through [Composer](http://getcomposer.org).
 
 ```bash
-composer require pixtech/inpost-laravel
+composer require pixtechpl/inpost-laravel
 ```
 
 ## Usage
