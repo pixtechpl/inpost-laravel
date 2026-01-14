@@ -117,7 +117,7 @@ $shipment = InPost::shipment();
 /*Receiver*/
 $receiverAddress = new InPostAddress('street', 'building_number', 'city', 'post_code', 'PL');
 /* company name or first name & last name */
-$receiver = new InPostReceiver('company name', 'first name', 'last name', 'e-mail', 'phone', $receiverAddress);
+$receiver = new InPostReceiver('e-mail', 'phone', 'company name', 'first name', 'last name', $receiverAddress);
 $shipment->setReceiver($receiver);
 
 /*Sender - Optional*/

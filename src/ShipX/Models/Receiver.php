@@ -11,9 +11,9 @@ class Receiver
 	private ?string $last_name;
 	private string $phone;
 	private string $email;
-    private Address $address;
+    private ?Address $address;
 
-    public function __construct(?string $company_name, ?string $first_name, ?string $last_name, string $email, string $phone, ?Address $address)
+    public function __construct(string $email, string $phone, ?string $company_name = null, ?string $first_name = null, ?string $last_name = null, ?Address $address = null)
     {
         $this->company_name = $company_name;
         $this->first_name = $first_name;
