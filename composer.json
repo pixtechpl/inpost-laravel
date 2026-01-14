@@ -28,7 +28,7 @@
   "extra": {
     "laravel": {
       "providers": [
-        "InPost\\InPost\\app\\Providers\\InPostServiceProvider"
+        "Pixtech\\InPost\\ShipX\\Providers\\InPostServiceProvider"
       ]
     }
   },
