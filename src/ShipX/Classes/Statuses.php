@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Classes;
+namespace Pixtech\InPost\ShipX\Classes;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -13,16 +13,16 @@ class Statuses extends Api
      * @param bool $returnJson
      * @return string|array
      */
-    public function list(bool $returnJson = false)
-    {
-        $cacheName = 'inPost_statuses_' . $returnJson;
+    public function list(bool $returnJson = false): array|string
+	{
+        $cacheName = 'inpost_statuses_' . $returnJson;
 
-        return Cache::remember($cacheName, config('inPost.cache_time'), function () use ($returnJson) {
+        return Cache::remember($cacheName, config('inpost.cache_time'), function () use ($returnJson) {
             $route = '/v1/statuses';
 
             $data = [];
 
-            $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route, $data);
+            $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route, $data);
 
             if($response->status() != 200)
                 abort(400, $response->body());

@@ -1,27 +1,21 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Classes;
+namespace Pixtech\InPost\ShipX\Classes;
 
-use PatrykSawicki\InPost\app\Models\Address;
+use Illuminate\Http\Client\ConnectionException;
+use Pixtech\InPost\ShipX\Models\Address;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 class DispatchOrders extends Api
 {
-    private int $organizationId;
     private array $shipments;
-    private string $comments, $office_hours, $name, $phone, $email;
+	private string $comments;
+	private string $office_hours;
+	private string $name;
+	private string $phone;
+	private string $email;
     private Address $address;
-
-    /**
-     * Set organization id.
-     *
-     * @param int $organizationId
-     */
-    public function setOrganizationId(int $organizationId): void
-    {
-        $this->organizationId = $organizationId;
-    }
 
     /**
      * Set shipments.
@@ -93,17 +87,18 @@ class DispatchOrders extends Api
         $this->email = $email;
     }
 
-    /**
-     * Create a new dispatch orders.
-     *
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function create(bool $returnJson = false)
-    {
+	/**
+	 * Create a new dispatch orders.
+	 *
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function create(bool $returnJson = false): array|string
+	{
         $this->validateDispatch();
 
-        $route = "/v1/organizations/{$this->organizationId}/dispatch_orders";
+        $route = "/v1/organizations/$this->organizationId/dispatch_orders";
 
         $data = [
             'shipments'     => $this->shipments,
@@ -115,119 +110,125 @@ class DispatchOrders extends Api
             'email'         => $this->email ?? null,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->post($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->post($this->apiUrl.$route, $data);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Cancellation of a dispatch orders.
-     *
-     * @param int $id
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function cancel(int $id, bool $returnJson = false)
-    {
+	/**
+	 * Cancellation of a dispatch orders.
+	 *
+	 * @param int $id
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function cancel(int $id, bool $returnJson = false): array|string
+	{
         $route = "/v1/dispatch_orders/$id";
 
-        $response = Http::withHeaders($this->requestHeaders())->delete($this->url.$route);
+        $response = Http::withHeaders($this->requestHeaders())->delete($this->apiUrl.$route);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Get dispatch orders list.
-     *
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function list(bool $returnJson = false)
-    {
-        $route = "/v1/organizations/{$this->organizationId}/dispatch_orders";
+	/**
+	 * Get dispatch orders list.
+	 *
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function list(bool $returnJson = false): array|string
+	{
+        $route = "/v1/organizations/$this->organizationId/dispatch_orders";
 
-        $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route);
+        $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Get dispatch orders details.
-     *
-     * @param int $id
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function get(int $id, bool $returnJson = false)
-    {
+	/**
+	 * Get dispatch orders details.
+	 *
+	 * @param int $id
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function get(int $id, bool $returnJson = false): array|string
+	{
         $route = "/v1/dispatch_orders/$id";
 
-        $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route);
+        $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Add comment to dispatch orders.
-     *
-     * @param int $dispatch_order_id
-     * @param string $comment
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function addComment(int $dispatch_order_id, string $comment, bool $returnJson = false)
-    {
-        $route = "/v1/organizations/{$this->organizationId}/dispatch_orders/$dispatch_order_id/comment";
+	/**
+	 * Add comment to dispatch orders.
+	 *
+	 * @param int $dispatch_order_id
+	 * @param string $comment
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function addComment(int $dispatch_order_id, string $comment, bool $returnJson = false): array|string
+	{
+        $route = "/v1/organizations/$this->organizationId/dispatch_orders/$dispatch_order_id/comment";
 
         $data = [
             'comment' => $comment,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->post($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->post($this->apiUrl.$route, $data);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Update comment in dispatch orders.
-     *
-     * @param int $dispatch_order_id
-     * @param int $comment_id
-     * @param string $comment
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function updateComment(int $dispatch_order_id, int $comment_id, string $comment, bool $returnJson = false)
-    {
-        $route = "/v1/organizations/{$this->organizationId}/dispatch_orders/$dispatch_order_id/comment";
+	/**
+	 * Update comment in dispatch orders.
+	 *
+	 * @param int $dispatch_order_id
+	 * @param int $comment_id
+	 * @param string $comment
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function updateComment(int $dispatch_order_id, int $comment_id, string $comment, bool $returnJson = false): array|string
+	{
+        $route = "/v1/organizations/$this->organizationId/dispatch_orders/$dispatch_order_id/comment";
 
         $data = [
             'id'        => $comment_id,
             'comment'   => $comment,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->put($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->put($this->apiUrl.$route, $data);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Remove comment from dispatch orders.
-     *
-     * @param int $dispatch_order_id
-     * @param int $comment_id
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function removeComment(int $dispatch_order_id, int $comment_id, bool $returnJson = false)
-    {
-        $route = "/v1/organizations/{$this->organizationId}/dispatch_orders/$dispatch_order_id/comment";
+	/**
+	 * Remove comment from dispatch orders.
+	 *
+	 * @param int $dispatch_order_id
+	 * @param int $comment_id
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function removeComment(int $dispatch_order_id, int $comment_id, bool $returnJson = false): array|string
+	{
+        $route = "/v1/organizations/$this->organizationId/dispatch_orders/$dispatch_order_id/comment";
 
         $data = [
             'id' => $comment_id,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->delete($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->delete($this->apiUrl.$route, $data);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
@@ -258,7 +259,7 @@ class DispatchOrders extends Api
      */
     private function validateShipments(): void
     {
-        if(!isset($this->shipments) || empty($this->shipments))
+        if(empty($this->shipments))
             throw new InvalidArgumentException('Shipments cannot be empty.');
     }
 

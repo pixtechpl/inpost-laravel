@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Models;
+namespace Pixtech\InPost\ShipX\Models;
 
 class Parcel
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Models;
+namespace Pixtech\InPost\ShipX\Models;
 
 use InvalidArgumentException;
 
@@ -24,8 +24,8 @@ class Parcels
         if(count($this->parcels) === 0)
             throw new InvalidArgumentException('No parcels provided');
 
-        if(count($this->parcels) > 1000)
-            throw new InvalidArgumentException('Maximum 1000 parcels allowed');
+        if(count($this->parcels) > 99)
+            throw new InvalidArgumentException('Maximum 99 parcels allowed');
     }
 
     /**

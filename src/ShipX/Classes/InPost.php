@@ -1,6 +1,6 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Classes;
+namespace Pixtech\InPost\ShipX\Classes;
 
 class InPost
 {

@@ -1,36 +1,33 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Classes;
+namespace Pixtech\InPost\ShipX\Classes;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
-use PatrykSawicki\InPost\app\Models\Cash;
-use PatrykSawicki\InPost\app\Models\Parcels;
-use PatrykSawicki\InPost\app\Models\Receiver;
-use PatrykSawicki\InPost\app\Models\Sender;
+use Pixtech\InPost\ShipX\Models\Cash;
+use Pixtech\InPost\ShipX\Models\Parcels;
+use Pixtech\InPost\ShipX\Models\Receiver;
+use Pixtech\InPost\ShipX\Models\Sender;
 use Illuminate\Support\Facades\Http;
 use InvalidArgumentException;
 
 class Shipment extends Api
 {
-    private int $organizationId;
     private Receiver $receiver;
     private Sender $sender;
     private Parcels $parcels;
-    private Cash $insurance, $cod;
-    private string $service, $comments, $reference, $external_customer_id, $mpk;
-    private array $additional_services, $custom_attributes;
-    private bool $is_return, $only_choice_of_offer;
-
-    /**
-     * Set organization id.
-     *
-     * @param int $organizationId
-     */
-    public function setOrganizationId(int $organizationId): void
-    {
-        $this->organizationId = $organizationId;
-    }
+    private Cash $insurance;
+	private Cash $cod;
+	private string $service;
+	private string $comments;
+	private string $reference;
+	private string $external_customer_id;
+	private string $mpk;
+	private array $additional_services;
+	private array $custom_attributes;
+	private bool $is_return ;
+	private bool $only_choice_of_offer;
 
     /**
      * Set receiver.
@@ -183,17 +180,18 @@ class Shipment extends Api
         parent::__construct();
     }
 
-    /**
-     * Send a new shipment.
-     *
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function send(bool $returnJson = false)
-    {
+	/**
+	 * Send a new shipment.
+	 *
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function send(bool $returnJson = false): array|string
+	{
         $this->validateShipment();
 
-        $route = "/v1/organizations/{$this->organizationId}/shipments";
+        $route = "/v1/organizations/$this->organizationId/shipments";
 
         $data = [
             'service'   => $this->service,
@@ -212,38 +210,39 @@ class Shipment extends Api
             'only_choice_of_offer' => $this->only_choice_of_offer,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->post($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->post($this->apiUrl.$route, $data);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
-    /**
-     * Cancellation of a shipment.
-     *
-     * @param int $id
-     * @param bool $returnJson
-     * @return string|array
-     */
-    public function cancel(int $id, bool $returnJson = false)
-    {
+	/**
+	 * Cancellation of a shipment.
+	 *
+	 * @param int $id
+	 * @param bool $returnJson
+	 * @return string|array
+	 * @throws ConnectionException
+	 */
+	public function cancel(int $id, bool $returnJson = false): array|string
+	{
         $route = "/v1/shipments/$id";
 
-        $response = Http::withHeaders($this->requestHeaders())->delete($this->url.$route);
+        $response = Http::withHeaders($this->requestHeaders())->delete($this->apiUrl.$route);
 
         return $returnJson ? $response->body() : json_decode($response->body(), true);
     }
 
     /**
      * Get label for a shipment.
-     *
+	 *
      * @param int $id
      * @param string $format
      * @param string $type
      * @return Response|mixed
-     * @throws BindingResolutionException
-     */
-    public function label(int $id, string $format = 'pdf', string $type = 'normal')
-    {
+     * @throws ConnectionException
+	 */
+	public function label(int $id, string $format = 'pdf', string $type = 'normal'): mixed
+	{
         $route = "/v1/shipments/$id/label";
 
         $data = [
@@ -251,7 +250,7 @@ class Shipment extends Api
             'type' => $type,
         ];
 
-        $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route, $data);
+        $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route, $data);
 
         return response()->make($response->getBody()->getContents(), 200, [
             'Content-Type' => 'application/pdf',

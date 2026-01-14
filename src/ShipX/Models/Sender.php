@@ -1,15 +1,18 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Models;
+namespace Pixtech\InPost\ShipX\Models;
 
-class Receiver
+class Sender
 {
-    private string $name, $company_name, $first_name, $last_name, $phone, $email;
+	private string $company_name;
+	private string $first_name;
+	private string $last_name;
+	private string $phone;
+	private string $email;
     private Address $address;
 
-    public function __construct(string $name, string $company_name, string $first_name, string $last_name, string $email, string $phone, Address $address)
+    public function __construct(string $company_name, string $first_name, string $last_name, string $email, string $phone, Address $address)
     {
-        $this->name = $name;
         $this->company_name = $company_name;
         $this->first_name = $first_name;
         $this->last_name = $last_name;
@@ -26,7 +29,6 @@ class Receiver
     public function toArray(): array
     {
         return [
-            'name' => $this->name,
             'company_name' => $this->company_name,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,

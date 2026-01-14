@@ -1,26 +1,30 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Models;
+namespace Pixtech\InPost\ShipX\Models;
 
 use InvalidArgumentException;
 
-class Weight
+class Dimensions
 {
     private string $unit;
-    private float $amount;
+    private float $length, $width, $height;
 
-    const ALLOWED_UNITS = ['kg'];
+    const ALLOWED_UNITS = ['mm'];
 
     /**
+     * @param float $length
+     * @param float $width
+     * @param float $height
      * @param string $unit
-     * @param float $amount
      */
-    public function __construct(float $amount, string $unit = 'kg')
+    public function __construct(float $length, float $width, float $height, string $unit = 'mm')
     {
         $this->validateUnit($unit);
 
         $this->unit = $unit;
-        $this->amount = $amount;
+        $this->length = $length;
+        $this->width = $width;
+        $this->height = $height;
     }
 
     /**
@@ -43,7 +47,9 @@ class Weight
     public function toArray(): array
     {
         return [
-            'amount' => $this->amount,
+            'length' => $this->length,
+            'width' => $this->width,
+            'height' => $this->height,
             'unit' => $this->unit,
         ];
     }

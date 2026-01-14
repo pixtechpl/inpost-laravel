@@ -1,8 +1,9 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Providers;
+namespace Pixtech\InPost\ShipX\Providers;
 
 use Illuminate\Support\ServiceProvider;
+
 class InPostServiceProvider extends ServiceProvider
 {
     /**
@@ -16,8 +17,8 @@ class InPostServiceProvider extends ServiceProvider
 
 //        include $path . '/routes/web.php';
 
-        if(file_exists($this->app->databasePath() . '/config/inPost.php') == false){
-            $this->publishes([$path . '/config/inPost.php' => config_path('inPost.php')], 'config');
+        if(!file_exists($this->app->databasePath() . '/config/inpost.php')){
+            $this->publishes([$path . '/config/inpost.php' => config_path('inpost.php')], 'config');
         }
     }
 
@@ -29,6 +30,6 @@ class InPostServiceProvider extends ServiceProvider
     public function register()
     {
         $path = realpath($raw = __DIR__ . '/../../');
-        $this->mergeConfigFrom($path . '/config/inPost.php', 'inPost');
+        $this->mergeConfigFrom($path . '/config/inpost.php', 'inpost');
     }
 }

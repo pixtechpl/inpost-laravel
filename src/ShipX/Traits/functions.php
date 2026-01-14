@@ -1,7 +1,7 @@
 <?php
 
 
-namespace PatrykSawicki\InPost\app\Traits;
+namespace Pixtech\InPost\ShipX\Traits;
 
 trait functions
 {

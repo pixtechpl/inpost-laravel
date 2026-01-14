@@ -1,19 +1,31 @@
+This package is a customized fork of the original [patryk-sawicki/inpost-laravel](https://github.com/patryk-sawicki/inpost-laravel) by Patryk Sawicki.
+
+Changes:
+- Namespaces changed to `Pixtech\InPost\ShipX`
+- Removed the need to manually pass `organizationId` — it can now be configured via
+  `config/inpost.php` or the `INPOST_ORGANIZATION_ID` environment variable
+- Added missing return type declarations
+- Increased minimum Laravel and PHP requirements
+- Adjusted validation requirements in the `Receiver` model
+- Renamed config file from `inPost.php` to `inpost.php`
+- Changed Laravel cache prefixes from `inPost` to `inpost_`
+- More changes may come soon (if I find something that requires it :P)
+
 # InPost ShipX API Client
 
 InPost ShipX API client for laravel.
 
-Based on aPaczka api [doc](https://dokumentacja-inpost.atlassian.net/wiki/spaces/PL/pages/622754/API+ShipX).
-
 ## Requirements
 
-* PHP 7.4 or higher with json extensions.
+* PHP 8.0 or higher with json extensions.
+* Laravel 12 or higher
 
 ## Installation
 
 The recommended way to install is through [Composer](http://getcomposer.org).
 
 ```bash
-composer require patryk-sawicki/inpost-laravel
+composer require pixtech/inpost-laravel
 ```
 
 ## Usage
@@ -22,12 +34,13 @@ Add to env:
 
 ```php
 INPOST_API_KEY = 'your_api_key'
+INPOST_ORGANIZATION_ID = 2173
 ```
 
 Import class:
 
 ```php
-use PatrykSawicki\InPost\app\Classes\InPost;
+use Pixtech\InPost\ShipX\Classes\InPost;
 ```
 
 ### Organizations
@@ -89,24 +102,22 @@ InPost::points()->get(string $name, bool $returnJson = false);
 Send a new shipment.
 
 ```php
-use PatrykSawicki\InPost\app\Classes\InPost;
-use PatrykSawicki\InPost\app\Models\Cash as InPostCash;
-use PatrykSawicki\InPost\app\Models\Dimensions as InPostDimensions;
-use PatrykSawicki\InPost\app\Models\Weight as InPostWeight;
-use PatrykSawicki\InPost\app\Models\Address as InPostAddress;
-use PatrykSawicki\InPost\app\Models\Parcel as InPostParcel;
-use PatrykSawicki\InPost\app\Models\Parcels as InPostParcels;
-use PatrykSawicki\InPost\app\Models\Receiver as InPostReceiver;
-use PatrykSawicki\InPost\app\Models\Sender as InPostSender;
+use Pixtech\InPost\ShipX\Classes\InPost;
+use Pixtech\InPost\ShipX\Models\Cash as InPostCash;
+use Pixtech\InPost\ShipX\Models\Dimensions as InPostDimensions;
+use Pixtech\InPost\ShipX\Models\Weight as InPostWeight;
+use Pixtech\InPost\ShipX\Models\Address as InPostAddress;
+use Pixtech\InPost\ShipX\Models\Parcel as InPostParcel;
+use Pixtech\InPost\ShipX\Models\Parcels as InPostParcels;
+use Pixtech\InPost\ShipX\Models\Receiver as InPostReceiver;
+use Pixtech\InPost\ShipX\Models\Sender as InPostSender;
 
 $shipment = InPost::shipment();
 
-/*Set organization*/
-$shipment->setOrganizationId(123);
-
 /*Receiver*/
 $receiverAddress = new InPostAddress('street', 'building_number', 'city', 'post_code', 'PL');
-$receiver = new InPostReceiver('name', 'company name', 'first name', 'last name', 'e-mail', 'phone', $receiverAddress);
+/* company name or first name & last name */
+$receiver = new InPostReceiver('company name', 'first name', 'last name', 'e-mail', 'phone', $receiverAddress);
 $shipment->setReceiver($receiver);
 
 /*Sender - Optional*/
@@ -204,13 +215,10 @@ InPost::statuses()->list(bool $returnJson = false);
 Create a new dispatch orders.
 
 ```php
-use PatrykSawicki\InPost\app\Classes\InPost;
-use PatrykSawicki\InPost\app\Models\Address as InPostAddress;
+use Pixtech\InPost\ShipX\Classes\InPost;
+use Pixtech\InPost\ShipX\Models\Address as InPostAddress;
 
 $dispatchOrders = InPost::dispatchOrders();
-
-/*Set organization*/
-$dispatchOrders->setOrganizationId(2324);
 
 /*Set shipments*/
 $dispatchOrders->setShipments(1, 2, 3, 4);
@@ -252,10 +260,6 @@ Get dispatch orders list.
 ```php
 $dispatchOrders = InPost::dispatchOrders();
 
-/*Set organization*/
-$dispatchOrders->setOrganizationId(2324);
-
-
 $dispatchOrders->list(bool $returnJson = false);
 ```
 
@@ -274,9 +278,6 @@ Add comment to dispatch orders.
 ```php
 $dispatchOrders = InPost::dispatchOrders();
 
-/*Set organization*/
-$dispatchOrders->setOrganizationId(123456);
-
 $dispatchOrders->addComment(int $dispatch_order_id, string $comment, bool $returnJson = false);
 ```
 
@@ -286,9 +287,6 @@ Update comment in dispatch orders.
 
 ```php
 $dispatchOrders = InPost::dispatchOrders();
-
-/*Set organization*/
-$dispatchOrders->setOrganizationId(123456);
 
 $dispatchOrders->updateComment(int $dispatch_order_id, int $comment_id, string $comment, bool $returnJson = false);
 ```
@@ -300,12 +298,5 @@ Update comment in dispatch orders.
 ```php
 $dispatchOrders = InPost::dispatchOrders();
 
-/*Set organization*/
-$dispatchOrders->setOrganizationId(123456);
-
 $dispatchOrders->removeComment(int $dispatch_order_id, int $comment_id, bool $returnJson = false);
 ```
-
-## Changelog
-
-Changelog is available [here](CHANGELOG.md).

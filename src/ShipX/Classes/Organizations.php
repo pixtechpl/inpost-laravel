@@ -1,8 +1,7 @@
 <?php
 
-namespace PatrykSawicki\InPost\app\Classes;
+namespace Pixtech\InPost\ShipX\Classes;
 
-use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -15,14 +14,14 @@ class Organizations extends Api
      * @param bool $returnJson
      * @return string|array
      */
-    public function list(array $options = [], bool $returnJson = false)
-    {
-        $cacheName = 'inPost_organizations_list_' . $returnJson . '_' . md5(json_encode($options));
+    public function list(array $options = [], bool $returnJson = false): array|string
+	{
+        $cacheName = 'inpost_organizations_list_' . $returnJson . '_' . md5(json_encode($options));
 
-        return Cache::remember($cacheName, config('inPost.cache_time'), function () use ($options, $returnJson) {
+        return Cache::remember($cacheName, config('inpost.cache_time'), function () use ($options, $returnJson) {
             $route = '/v1/organizations';
 
-            $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route, $options);
+            $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route, $options);
 
             if($response->status() != 200)
                 abort(400, $response->body());
@@ -38,14 +37,14 @@ class Organizations extends Api
      * @param bool $returnJson
      * @return string|array
      */
-    public function get(int $id, bool $returnJson = false)
-    {
-        $cacheName = 'inPost_organizations_get_' . $id . '_' . $returnJson;
+    public function get(int $id, bool $returnJson = false): array|string
+	{
+        $cacheName = 'inpost_organizations_get_' . $id . '_' . $returnJson;
 
-        return Cache::remember($cacheName, config('inPost.cache_time'), function () use ($id, $returnJson) {
+        return Cache::remember($cacheName, config('inpost.cache_time'), function () use ($id, $returnJson) {
             $route = '/v1/organizations/' . $id;
 
-            $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route);
+            $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route);
 
             if($response->status() != 200)
                 abort(400, $response->body());
@@ -61,14 +60,14 @@ class Organizations extends Api
      * @param bool $returnJson
      * @return string|array
      */
-    public function statistics(int $id, bool $returnJson = false)
-    {
-        $cacheName = 'inPost_organizations_statistics_' . $id . '_' . $returnJson;
+    public function statistics(int $id, bool $returnJson = false): array|string
+	{
+        $cacheName = 'inpost_organizations_statistics_' . $id . '_' . $returnJson;
 
-        return Cache::remember($cacheName, config('inPost.cache_time'), function () use ($id, $returnJson) {
+        return Cache::remember($cacheName, config('inpost.cache_time'), function () use ($id, $returnJson) {
             $route = '/v1/organizations/' . $id . '/statistics';
 
-            $response = Http::withHeaders($this->requestHeaders())->get($this->url.$route);
+            $response = Http::withHeaders($this->requestHeaders())->get($this->apiUrl.$route);
 
             if($response->status() != 200)
                 abort(400, $response->body());
